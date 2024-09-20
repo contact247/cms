@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { apiFetch } from './api';
+import { apiFetch } from '../api';
 function CourseDetail() {
   const { id } = useParams();
   const [course, setCourse] = useState(null);
