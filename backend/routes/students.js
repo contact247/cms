@@ -8,13 +8,11 @@ const router = express.Router();
 // @route   GET api/students
 // @desc    Get all students
 // @access  Private (Admin)
-router.get('/', auth, async (req, res) => {
-  if (req.user.role !== 'admin') {
-    return res.status(403).json({ msg: 'Access denied' });
-  }
-
+router.get('/', async (req, res) => {
   try {
-    const students = await Student.find().populate('courses');
+    const students = await Student.find()
+      .populate('department')
+      .populate('courses');
     res.json(students);
   } catch (err) {
     console.error(err.message);
@@ -25,12 +23,9 @@ router.get('/', auth, async (req, res) => {
 // @route   POST api/students
 // @desc    Add a new student
 // @access  Private (Admin)
-router.post('/', auth, async (req, res) => {
-  if (req.user.role !== 'admin') {
-    return res.status(403).json({ msg: 'Access denied' });
-  }
+router.post('/', async (req, res) => {
+  const { firstName, lastName, email, contact, department, courses } = req.body;
 
-  const { name, email, contact, courses } = req.body;
 
   try {
     let student = await Student.findOne({ email });
@@ -39,9 +34,11 @@ router.post('/', auth, async (req, res) => {
     }
 
     student = new Student({
-      name,
+      firstName,
+      lastName,
       email,
       contact,
+      department,
       courses,
     });
 
@@ -56,13 +53,11 @@ router.post('/', auth, async (req, res) => {
 // @route   GET api/students/:id
 // @desc    Get student by ID
 // @access  Private (Admin)
-router.get('/:id', auth, async (req, res) => {
-  if (req.user.role !== 'admin') {
-    return res.status(403).json({ msg: 'Access denied' });
-  }
-
+router.get('/:id', async (req, res) => {
   try {
-    const student = await Student.findById(req.params.id).populate('courses');
+    const student = await Student.findById(req.params.id)
+      .populate('department')
+      .populate('courses');
     if (!student) {
       return res.status(404).json({ msg: 'Student not found' });
     }
@@ -79,17 +74,15 @@ router.get('/:id', auth, async (req, res) => {
 // @route   PUT api/students/:id
 // @desc    Update a student
 // @access  Private (Admin)
-router.put('/:id', auth, async (req, res) => {
-  if (req.user.role !== 'admin') {
-    return res.status(403).json({ msg: 'Access denied' });
-  }
-
-  const { name, email, contact, courses } = req.body;
+router.put('/:id', async (req, res) => {
+  const { firstName, lastName, email, contact, department, courses } = req.body;
 
   const studentFields = {};
-  if (name) studentFields.name = name;
+  if (firstName) studentFields.firstName = firstName;
+  if (lastName) studentFields.lastName = lastName;
   if (email) studentFields.email = email;
   if (contact) studentFields.contact = contact;
+  if (department) studentFields.department = department;
   if (courses) studentFields.courses = courses;
 
   try {
@@ -114,11 +107,7 @@ router.put('/:id', auth, async (req, res) => {
 // @route   DELETE api/students/:id
 // @desc    Delete a student
 // @access  Private (Admin)
-router.delete('/:id', auth, async (req, res) => {
-  if (req.user.role !== 'admin') {
-    return res.status(403).json({ msg: 'Access denied' });
-  }
-
+router.delete('/:id', async (req, res) => {
   try {
     const student = await Student.findById(req.params.id);
     if (!student) {
@@ -135,5 +124,6 @@ router.delete('/:id', auth, async (req, res) => {
     res.status(500).send('Server error');
   }
 });
+  
 
 module.exports = router;

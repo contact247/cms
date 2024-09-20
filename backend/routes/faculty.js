@@ -8,13 +8,11 @@ const router = express.Router();
 // @route   GET api/faculty
 // @desc    Get all faculty
 // @access  Private (Admin)
-router.get('/', auth, async (req, res) => {
-  if (req.user.role !== 'admin') {
-    return res.status(403).json({ msg: 'Access denied' });
-  }
-
+router.get('/', async (req, res) => {
   try {
-    const faculty = await Faculty.find().populate('courses');
+    const faculty = await Faculty.find()
+      .populate('department')
+      .populate('courses');
     res.json(faculty);
   } catch (err) {
     console.error(err.message);
@@ -25,12 +23,19 @@ router.get('/', auth, async (req, res) => {
 // @route   POST api/faculty
 // @desc    Add a new faculty
 // @access  Private (Admin)
-router.post('/', auth, async (req, res) => {
-  if (req.user.role !== 'admin') {
-    return res.status(403).json({ msg: 'Access denied' });
+router.post('/', async (req, res) => {
+  const { firstName, lastName, email, contact, department, courses, position } = req.body;
+
+  // Validate required fields
+  if (!firstName || !lastName || !email || !contact || !department || !position) {
+    return res.status(400).json({ msg: 'Please provide all required fields' });
   }
 
-  const { name, email, contact, courses } = req.body;
+  // Validate email format
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(email)) {
+    return res.status(400).json({ msg: 'Please provide a valid email address' });
+  }
 
   try {
     let faculty = await Faculty.findOne({ email });
@@ -39,10 +44,13 @@ router.post('/', auth, async (req, res) => {
     }
 
     faculty = new Faculty({
-      name,
+      firstName,
+      lastName,
       email,
       contact,
+      department,
       courses,
+      position
     });
 
     await faculty.save();
@@ -56,13 +64,11 @@ router.post('/', auth, async (req, res) => {
 // @route   GET api/faculty/:id
 // @desc    Get faculty by ID
 // @access  Private (Admin)
-router.get('/:id', auth, async (req, res) => {
-  if (req.user.role !== 'admin') {
-    return res.status(403).json({ msg: 'Access denied' });
-  }
-
+router.get('/:id', async (req, res) => {
   try {
-    const faculty = await Faculty.findById(req.params.id).populate('courses');
+    const faculty = await Faculty.findById(req.params.id)
+      .populate('department')
+      .populate('courses');
     if (!faculty) {
       return res.status(404).json({ msg: 'Faculty not found' });
     }
@@ -79,18 +85,18 @@ router.get('/:id', auth, async (req, res) => {
 // @route   PUT api/faculty/:id
 // @desc    Update a faculty
 // @access  Private (Admin)
-router.put('/:id', auth, async (req, res) => {
-  if (req.user.role !== 'admin') {
-    return res.status(403).json({ msg: 'Access denied' });
-  }
-
-  const { name, email, contact, courses } = req.body;
+router.put('/:id', async (req, res) => {
+  const { firstName, lastName, email, contact, department, courses, position } = req.body;
+  
 
   const facultyFields = {};
-  if (name) facultyFields.name = name;
+  if (firstName) facultyFields.firstName = firstName;
+  if (lastName) facultyFields.lastName = lastName;
   if (email) facultyFields.email = email;
   if (contact) facultyFields.contact = contact;
+  if (department) facultyFields.department = department;
   if (courses) facultyFields.courses = courses;
+  if (position) facultyFields.position = position;
 
   try {
     let faculty = await Faculty.findById(req.params.id);
@@ -107,6 +113,9 @@ router.put('/:id', auth, async (req, res) => {
     res.json(faculty);
   } catch (err) {
     console.error(err.message);
+    if (err.kind === 'ObjectId') {
+      return res.status(404).json({ msg: 'Faculty not found' });
+    }
     res.status(500).send('Server error');
   }
 });
@@ -114,11 +123,7 @@ router.put('/:id', auth, async (req, res) => {
 // @route   DELETE api/faculty/:id
 // @desc    Delete a faculty
 // @access  Private (Admin)
-router.delete('/:id', auth, async (req, res) => {
-  if (req.user.role !== 'admin') {
-    return res.status(403).json({ msg: 'Access denied' });
-  }
-
+router.delete('/:id', async (req, res) => {
   try {
     const faculty = await Faculty.findById(req.params.id);
     if (!faculty) {

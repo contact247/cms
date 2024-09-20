@@ -7,6 +7,7 @@ const studentRoutes = require('./routes/students');
 const authRoutes = require('./routes/auth');
 const courseRoutes = require('./routes/courses');
 const facultyRoutes = require('./routes/faculty');
+const departmentRoutes = require('./routes/departments');
 
 dotenv.config();
 
@@ -21,6 +22,7 @@ app.use(express.json());
 mongoose.connect(process.env.MONGO_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
+  dbName: 'cms'
 })
   .then(() => console.log('MongoDB Connected'))
   .catch(err => console.log(err));
@@ -34,7 +36,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/students', studentRoutes);
 app.use('/api/courses', courseRoutes);
 app.use('/api/faculty', facultyRoutes);
-
+app.use('/api/departments', departmentRoutes);
 // Start Server
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
