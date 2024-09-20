@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-
+import { apiFetch } from '../api';
 function StudentDetail() {
   const { id } = useParams();
   const [student, setStudent] = useState(null);
@@ -8,7 +8,7 @@ function StudentDetail() {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    fetch(`/api/students/${id}`)
+    apiFetch(`/api/students/${id}`)
       .then(response => {
         if (!response.ok) {
           throw new Error('Network response was not ok');

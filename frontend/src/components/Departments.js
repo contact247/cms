@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { apiFetch } from '../api';
 
 function Departments() {
   const [departments, setDepartments] = useState([]);
@@ -7,7 +8,7 @@ function Departments() {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    fetch('/api/departments')
+    apiFetch('/api/departments')
       .then(response => {
         if (!response.ok) {
           throw new Error('Network response was not ok');
