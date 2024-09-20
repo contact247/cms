@@ -10,10 +10,10 @@ function StudentDetail() {
   useEffect(() => {
     apiFetch(`/api/students/${id}`)
       .then(response => {
-        if (!response.ok) {
-          throw new Error('Network response was not ok');
-        }
-        return response.json();
+        // if (!response.ok) {
+        //   throw new Error('Network response was not ok');
+        // }
+        return response;
       })
       .then(data => {
         setStudent(data);
