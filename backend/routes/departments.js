@@ -3,6 +3,8 @@ const express = require('express');
 const router = express.Router();
 const Department = require('../models/Department');
 const auth = require('../middleware/auth');
+const Faculty = require('../models/Faculty');
+const Student = require('../models/Student');
 
 // @route   GET /departments
 // @desc    Get all departments
@@ -61,9 +63,11 @@ router.post('/', async (req, res) => {
         description: description || '',
       });
   
-      await department.save();
-      res.status(201).json(department);
+      const savedDepartment = await department.save();
+      const populatedDepartment = await Department.findById(savedDepartment._id).populate('head');
+      res.status(201).json(populatedDepartment);
     } catch (error) {
+      console.error(error);
       res.status(500).json({ error: 'Server Error' });
     }
   });

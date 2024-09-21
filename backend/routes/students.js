@@ -42,8 +42,9 @@ router.post('/', async (req, res) => {
       courses,
     });
 
-    await student.save();
-    res.json(student);
+    const savedStudent = await student.save();
+    const populatedStudent = await Student.findById(savedStudent._id).populate('department').populate('courses');
+    res.json(populatedStudent);
   } catch (err) {
     console.error(err.message);
     res.status(500).send('Server error');
@@ -124,6 +125,6 @@ router.delete('/:id', async (req, res) => {
     res.status(500).send('Server error');
   }
 });
-  
+
 
 module.exports = router;

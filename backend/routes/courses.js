@@ -45,8 +45,9 @@ router.post('/', async (req, res) => {
       students,
     });
 
-    await course.save();
-    res.json(course);
+    const savedCourse = await course.save();
+    const populatedCourse = await Course.findById(savedCourse._id).populate('department').populate('faculty').populate('students');
+    res.status(201).json(populatedCourse);  
   } catch (err) {
     console.error(err.message);
     res.status(500).send('Server error');
