@@ -125,9 +125,10 @@ router.delete('/:id', async (req, res) => {
         return res.status(400).json({ error: 'Cannot delete department with assigned students' });
       }
   
-      await department.remove();
+      await Department.findByIdAndDelete(req.params.id);
       res.status(200).json({ message: 'Department deleted successfully' });
     } catch (error) {
+      console.error(error);
       res.status(500).json({ error: 'Server Error' });
     }
   });

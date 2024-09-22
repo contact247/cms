@@ -46,6 +46,18 @@ export default function Departments() {
     setEditingDepartment(null);
   };
 
+  const handleDeleteClick = async (departmentId) => {
+    if (window.confirm('Are you sure you want to delete this department?')) {
+      try {
+        await apiFetch(`/api/departments/${departmentId}`, { method: 'DELETE'});
+        setDepartments(prevDepartments => prevDepartments.filter(dept => dept._id !== departmentId));
+      } catch (error) {
+        console.error('Error deleting department:', error);
+        alert('Failed to delete department. Please try again.');
+      }
+    }
+  };
+
   if (loading) return <div>Loading...</div>;
   if (error) return <div>Error: {error}</div>;
 
@@ -75,7 +87,7 @@ export default function Departments() {
               <td style={{ padding: '12px', borderBottom: '1px solid #e5e7eb' }}>
                 <Link to={`/departments/${department._id}`} style={{ marginRight: '8px', padding: '4px 8px', backgroundColor: '#3b82f6', color: 'white', textDecoration: 'none', borderRadius: '4px' }}>View</Link>
                 <button onClick={() => handleEditClick(department)} style={{ marginRight: '8px', padding: '4px 8px', backgroundColor: '#e5e7eb', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>Edit</button>
-                <button style={{ padding: '4px 8px', backgroundColor: '#ef4444', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>Delete</button>
+                <button onClick={() => handleDeleteClick(department._id)} style={{ padding: '4px 8px', backgroundColor: '#ef4444', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>Delete</button>
               </td>
             </tr>
           ))}

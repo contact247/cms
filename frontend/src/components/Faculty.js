@@ -49,6 +49,19 @@ export default function Faculty() {
     setEditingFaculty(null);
   };
 
+  const handleDeleteClick = async (facultyId) =>
+ {
+    if (window.confirm('Are you sure you want to delete this faculty member?')) {
+      try {
+        await apiFetch(`/api/faculty/${facultyId}`, { method: 'DELETE' });
+        setFaculty(prevFaculty => prevFaculty.filter(member => member._id !== facultyId));
+      } catch (error) {
+        console.error('Error deleting faculty member:', error);
+        alert('Failed to delete faculty member. Please try again.');
+      }
+    }
+  };
+
   if (loading) return <div>Loading...</div>;
   if (error) return <div>Error: {error}</div>;
 
@@ -82,7 +95,7 @@ export default function Faculty() {
               <td style={{ padding: '12px', borderBottom: '1px solid #e5e7eb' }}>
                 <Link to={`/faculty/${member._id}`} style={{ marginRight: '8px', padding: '4px 8px', backgroundColor: '#3b82f6', color: 'white', textDecoration: 'none', borderRadius: '4px' }}>View</Link>
                 <button onClick={() => handleEditClick(member)} style={{ marginRight: '8px', padding: '4px 8px', backgroundColor: '#e5e7eb', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>Edit</button>
-                <button style={{ padding: '4px 8px', backgroundColor: '#ef4444', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>Delete</button>
+                <button onClick={() => handleDeleteClick(member._id)} style={{ padding: '4px 8px', backgroundColor: '#ef4444', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>Delete</button>
               </td>
             </tr>
           ))}

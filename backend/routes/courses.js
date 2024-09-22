@@ -132,7 +132,7 @@ router.delete('/:id', async (req, res) => {
       return res.status(404).json({ msg: 'Course not found' });
     }
 
-    await course.remove();
+    await Course.findByIdAndDelete(req.params.id);
     res.json({ msg: 'Course removed' });
   } catch (err) {
     console.error(err.message);
