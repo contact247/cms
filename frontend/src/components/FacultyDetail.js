@@ -59,8 +59,15 @@ export default function FacultyDetail() {
     textDecoration: 'none'
   };
 
+  const returnLinkStyle = {
+    ...linkStyle,
+    display: 'inline-block',
+    marginBottom: '20px'
+  };
+
   return (
     <div style={containerStyle}>
+      <Link to="/faculty" style={returnLinkStyle}>← Return to Faculty List</Link>
       <h1 style={headerStyle}>Faculty Details</h1>
       <div style={sectionStyle}>
         <span style={labelStyle}>Name:</span>

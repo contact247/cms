@@ -59,8 +59,15 @@ export default function StudentDetail() {
     textDecoration: 'none'
   };
 
+  const returnLinkStyle = {
+    ...linkStyle,
+    display: 'inline-block',
+    marginBottom: '20px'
+  };
+
   return (
     <div style={containerStyle}>
+      <Link to="/students" style={returnLinkStyle}>← Return to Students List</Link>
       <h1 style={headerStyle}>Student Details</h1>
       <div style={sectionStyle}>
         <span style={labelStyle}>Name:</span>

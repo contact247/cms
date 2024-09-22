@@ -59,8 +59,15 @@ export default function DepartmentDetail() {
     textDecoration: 'none'
   };
 
+  const returnLinkStyle = {
+    ...linkStyle,
+    display: 'inline-block',
+    marginBottom: '20px'
+  };
+
   return (
     <div style={containerStyle}>
+      <Link to="/departments" style={returnLinkStyle}>← Return to Departments List</Link>
       <h1 style={headerStyle}>Department Details</h1>
       <div style={sectionStyle}>
         <span style={labelStyle}>Name:</span>
