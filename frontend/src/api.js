@@ -46,6 +46,7 @@ export const apiFetch = async (endpoint, options = {}) => {
     return response.json();
   } catch (error) {
     console.error('API Fetch Error:', error);
+    
     throw error;
   }
 };
