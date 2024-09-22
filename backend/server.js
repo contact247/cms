@@ -31,9 +31,10 @@ app.use(cors({
     }
     return callback(null, true);
   },
+  methods: ['GET', 'POST', 'PUT', 'DELETE'], // Explicitly specify allowed methods
+  allowedHeaders: ['Content-Type', 'Authorization'], // Specify allowed headers
   credentials: true, // Allow cookies if needed
 }));
-
 
 app.use(express.json());
 
