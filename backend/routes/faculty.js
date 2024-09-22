@@ -110,8 +110,8 @@ router.put('/:id', async (req, res) => {
       { $set: facultyFields },
       { new: true }
     );
-
-    res.json(faculty);
+    const populatedFaculty = await Faculty.findById(faculty._id).populate('department').populate('courses');
+    res.json(populatedFaculty);
   } catch (err) {
     console.error(err.message);
     if (err.kind === 'ObjectId') {

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { apiFetch } from '../api';
 import AddCourseForm from './AddCourseForm';
+import EditCourseForm from './EditCourseForm';
 
 export default function Courses() {
   const [courses, setCourses] = useState([]);
@@ -10,6 +11,7 @@ export default function Courses() {
   const [students, setStudents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [editingCourse, setEditingCourse] = useState(null);
 
   useEffect(() => {
     Promise.all([
@@ -33,6 +35,21 @@ export default function Courses() {
 
   const handleCourseAdded = (newCourse) => {
     setCourses(prevCourses => [...prevCourses, newCourse]);
+  };
+
+  const handleEditClick = (course) => {
+    setEditingCourse(course);
+  };
+
+  const handleCourseUpdated = (updatedCourse) => {
+    setCourses(prevCourses => prevCourses.map(course => 
+      course._id === updatedCourse._id ? updatedCourse : course
+    ));
+    setEditingCourse(null);
+  };
+
+  const handleCancelEdit = () => {
+    setEditingCourse(null);
   };
 
   if (loading) return <div>Loading...</div>;
@@ -76,13 +93,44 @@ export default function Courses() {
               </td>
               <td style={{ padding: '12px', borderBottom: '1px solid #e5e7eb' }}>
                 <Link to={`/courses/${course._id}`} style={{ marginRight: '8px', padding: '4px 8px', backgroundColor: '#3b82f6', color: 'white', textDecoration: 'none', borderRadius: '4px' }}>View</Link>
-                <button style={{ marginRight: '8px', padding: '4px 8px', backgroundColor: '#e5e7eb', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>Edit</button>
+                <button onClick={() => handleEditClick(course)} style={{ marginRight: '8px', padding: '4px 8px', backgroundColor: '#e5e7eb', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>Edit</button>
                 <button style={{ padding: '4px 8px', backgroundColor: '#ef4444', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>Delete</button>
               </td>
             </tr>
           ))}
         </tbody>
       </table>
+      {editingCourse && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundColor: 'rgba(0, 0, 0, 0.5)',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center'
+        }}>
+          <div style={{
+            backgroundColor: 'white',
+            padding: '20px',
+            borderRadius: '8px',
+            maxWidth: '500px',
+            width: '100%'
+          }}>
+            <h2 style={{ marginBottom: '20px' }}>Edit Course</h2>
+            <EditCourseForm
+              course={editingCourse}
+              departments={departments}
+              faculty={faculty}
+              students={students}
+              onCourseUpdated={handleCourseUpdated}
+              onCancel={handleCancelEdit}
+            />
+          </div>
+        </div>
+      )}
     </div>
   );
 }

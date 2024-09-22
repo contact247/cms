@@ -95,9 +95,9 @@ router.put('/:id',async (req, res) => {
   
       if (name) department.name = name;
       if (description) department.description = description;
-  
-      await department.save();
-      res.status(200).json(department);
+      const savedDepartment = await department.save();
+      const populatedDepartment = await Department.findById(savedDepartment._id).populate('head');
+      res.status(200).json(populatedDepartment);
     } catch (error) {
       res.status(500).json({ error: 'Server Error' });
     }

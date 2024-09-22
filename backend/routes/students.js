@@ -97,8 +97,8 @@ router.put('/:id', async (req, res) => {
       { $set: studentFields },
       { new: true }
     );
-
-    res.json(student);
+    const populatedStudent = await Student.findById(student._id).populate('department').populate('courses'); 
+    res.json(populatedStudent);
   } catch (err) {
     console.error(err.message);
     res.status(500).send('Server error');
